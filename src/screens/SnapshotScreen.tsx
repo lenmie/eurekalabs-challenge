@@ -2,12 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { View, Image, StyleSheet, Text, TouchableOpacity } from 'react-native'; // Import Button and Share
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import Share from 'react-native-share';
-import Geolocation from '@react-native-community/geolocation';
 import { COLORS } from '../constants/colors';
+import Geolocation from '@react-native-community/geolocation';
 
-const SnapshotScreen: React.FC = ({ navigation }) => {
+const SnapshotScreen: React.FC = ({ route, navigation }) => {
   const [snapshot, setSnapshot] = useState<string | null>(null);
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState({});
+
+  useEffect(() => {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        setLocation(position.coords);
+      },
+      (error) => {
+        console.log(error.code, error.message);
+      },
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
+    );
+  });
 
   useEffect(() => {
     (async () => {
@@ -20,20 +32,6 @@ const SnapshotScreen: React.FC = ({ navigation }) => {
         setSnapshot(lastPhoto);
       }
     })();
-  }, []);
-
-  useEffect(() => {
-    Geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setLocation(`Lat: ${latitude}, Long: ${longitude}`);
-      },
-      (error) => {
-        console.log(error);
-        setLocation('Location not available');
-      },
-      { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
-    );
   }, []);
 
   const onShare = async () => {
@@ -56,7 +54,9 @@ const SnapshotScreen: React.FC = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {snapshot && <Image source={{ uri: snapshot }} style={styles.image} />}
-      <Text style={styles.locationText}>Your Location: {location}</Text>
+      <Text style={styles.locationText}>
+        Your Location: lat:{location.latitude} long:{location.longitude}
+      </Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={onShare} style={styles.button}>
           <Text style={styles.buttonText}>Share Snapshot</Text>

@@ -1,15 +1,45 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, Text, PermissionsAndroid } from 'react-native';
 import { Camera, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import ShutterButton from '../components/ShutterButton';
+import Geolocation from '@react-native-community/geolocation';
+
+const getRequestPermissionPromise = () => {
+  return PermissionsAndroid.requestMultiple([
+    //PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    PermissionsAndroid.PERMISSIONS.CAMERA,
+  ]).then(
+    (statuses) =>
+      //statuses[PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION] === PermissionsAndroid.RESULTS.GRANTED &&
+      statuses[PermissionsAndroid.PERMISSIONS.CAMERA] === PermissionsAndroid.RESULTS.GRANTED
+  );
+};
 
 const CameraScreen = ({ navigation }) => {
   const device = useCameraDevice('back');
   const camera = useRef<Camera>(null);
-  const { hasPermission } = useCameraPermission();
+  // const { hasPermission, requestPermission } = useCameraPermission();
+  const [allPermissionsGranted, setAllPermissionsGranted] = useState(false);
   const [isTakingPhoto, setIsTakingPhoto] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false); // New state to track camera initialization
+  const [location, setLocation] = useState({});
+
+  React.useEffect(() => {
+    Geolocation.setRNConfiguration({
+      skipPermissionRequests: false,
+      authorizationLevel: 'whenInUse',
+      enableBackgroundLocationUpdates: false,
+      locationProvider: 'playServices',
+    });
+
+    getRequestPermissionPromise().then((allGranted) => {
+      setAllPermissionsGranted(allGranted);
+      Geolocation.requestAuthorization();
+    });
+  }, []);
+
+  //React.useEffect(() => {}, [hasPermission, requestPermission]);
 
   const handleShutterButtonPress = async () => {
     if (camera.current && !isTakingPhoto && isCameraReady) {
@@ -25,33 +55,31 @@ const CameraScreen = ({ navigation }) => {
         console.error('Failed to take photo:', error);
       } finally {
         setIsTakingPhoto(false);
+        navigation.navigate('Snapshot');
       }
     }
-
-    navigation.navigate('Snapshot');
   };
-
-  useEffect(() => {
-    if (!hasPermission) {
-      // Handle camera permission not granted
-      return;
-    }
-  }, [hasPermission]);
 
   return (
     <View style={styles.container}>
-      <Camera
-        style={StyleSheet.absoluteFill}
-        device={device}
-        isActive={true}
-        ref={camera}
-        photo={true}
-        onInitialized={() => setIsCameraReady(true)} // Set camera ready state to true when initialized
-      />
-      <ShutterButton
-        onPress={handleShutterButtonPress}
-        disabled={isTakingPhoto || !isCameraReady} // Disable button when taking photo or camera not ready
-      />
+      {!allPermissionsGranted ? (
+        <Text>carlos</Text>
+      ) : (
+        <>
+          <Camera
+            style={StyleSheet.absoluteFill}
+            device={device}
+            isActive={true}
+            ref={camera}
+            photo={true}
+            onInitialized={() => setIsCameraReady(true)} // Set camera ready state to true when initialized
+          />
+          <ShutterButton
+            onPress={handleShutterButtonPress}
+            disabled={isTakingPhoto || !isCameraReady} // Disable button when taking photo or camera not ready
+          />
+        </>
+      )}
     </View>
   );
 };
