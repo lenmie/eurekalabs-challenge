@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Camera, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import ShutterButton from '../components/ShutterButton';
 
 const CameraScreen = ({ navigation }) => {
   const device = useCameraDevice('back');
@@ -47,13 +48,10 @@ const CameraScreen = ({ navigation }) => {
         photo={true}
         onInitialized={() => setIsCameraReady(true)} // Set camera ready state to true when initialized
       />
-      <TouchableOpacity
-        style={styles.shutterButton}
+      <ShutterButton
         onPress={handleShutterButtonPress}
         disabled={isTakingPhoto || !isCameraReady} // Disable button when taking photo or camera not ready
-      >
-        <Text style={styles.shutterButtonText}>Take Photo</Text>
-      </TouchableOpacity>
+      />
     </View>
   );
 };
@@ -63,20 +61,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  shutterButton: {
-    position: 'absolute',
-    bottom: 20,
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  shutterButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
 
