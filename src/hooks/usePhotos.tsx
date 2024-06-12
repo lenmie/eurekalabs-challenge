@@ -4,7 +4,6 @@ import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 const usePhotos = () => {
   const [photos, setPhotos] = React.useState([]);
   const [page, setPage] = React.useState(1); // Track the current page of photos
-  
 
   const getPhotos = async () => {
     try {
