@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { View, Text, PermissionsAndroid, Dimensions, StyleSheet, TouchableOpacity, Platform } from 'react-native';
-import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import { View, Text, Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import PhotoGrid from '../components/PhotoGrid';
 import { COLORS } from '../constants/colors';

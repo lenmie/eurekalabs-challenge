@@ -1,12 +1,11 @@
-import React, { useRef, useState } from 'react';
-import { View, StyleSheet, Text, PermissionsAndroid } from 'react-native';
-import { Camera, useCameraDevice } from 'react-native-vision-camera';
-import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import React from 'react';
+import { View, StyleSheet, Text } from 'react-native';
+import { Camera } from 'react-native-vision-camera';
 import ShutterButton from '../components/ShutterButton';
 import useCameraAndLocationPermissions from '../hooks/useCameraAndLocationPermissions';
 import useTakePhoto from '../hooks/useTakePhoto';
 
-const CameraScreen = ({ navigation }) => {
+const CameraScreen = () => {
   const allPermissionsGranted = useCameraAndLocationPermissions();
   const { handleShutterButtonPress, device, camera, isTakingPhoto, isCameraReady, setIsCameraReady } = useTakePhoto();
 
@@ -22,12 +21,9 @@ const CameraScreen = ({ navigation }) => {
             isActive={true}
             ref={camera}
             photo={true}
-            onInitialized={() => setIsCameraReady(true)} // Set camera ready state to true when initialized
+            onInitialized={() => setIsCameraReady(true)}
           />
-          <ShutterButton
-            onPress={handleShutterButtonPress}
-            disabled={isTakingPhoto || !isCameraReady} // Disable button when taking photo or camera not ready
-          />
+          <ShutterButton onPress={handleShutterButtonPress} disabled={isTakingPhoto || !isCameraReady} />
         </>
       )}
     </View>
