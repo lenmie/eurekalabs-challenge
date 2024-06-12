@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, StyleSheet, Text } from 'react-native';
+import { View, Image, StyleSheet, Text, Button, Share } from 'react-native'; // Import Button and Share
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 
 const SnapshotScreen: React.FC = () => {
@@ -20,22 +20,25 @@ const SnapshotScreen: React.FC = () => {
       }
     })();
   }, []);
-  return <View style={styles.container}>{snapshot && <Image source={{ uri: snapshot }} style={styles.image} />}</View>;
+
+  const onShare = async () => {
+    if (snapshot) {
+      try {
+        await Share.share({
+          message: 'Check out this snapshot!',
+          url: snapshot,
+        });
+      } catch (error) {
+        // Handle error
+      }
+    }
+  };
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>snapshot</Text>
+    <View style={styles.container}>
+      {snapshot && <Image source={{ uri: snapshot }} style={styles.image} />}
+      <Button title="Share Snapshot" onPress={onShare} />
     </View>
-  );
-
-  return (
-    <Image
-      style={{
-        width: 300,
-        height: 100,
-      }}
-      source={{ uri: snapshot }}
-    />
   );
 };
 
