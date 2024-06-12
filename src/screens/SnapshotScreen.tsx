@@ -5,7 +5,7 @@ import Share from 'react-native-share';
 import { COLORS } from '../constants/colors';
 import Geolocation from '@react-native-community/geolocation';
 
-const SnapshotScreen: React.FC = ({ route, navigation }) => {
+const SnapshotScreen: React.FC = ({ navigation }) => {
   const [snapshot, setSnapshot] = useState<string | null>(null);
   const [location, setLocation] = useState({});
 
@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: COLORS.BACKGROUND,
   },
   image: {
     width: '100%',
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   button: {
-    backgroundColor: 'blue',
+    backgroundColor: COLORS.PRIMARY,
     padding: 10,
     borderRadius: 5,
   },

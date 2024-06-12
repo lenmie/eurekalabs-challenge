@@ -3,6 +3,7 @@ import { View, Text, PermissionsAndroid, Dimensions, StyleSheet, TouchableOpacit
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import { useFocusEffect } from '@react-navigation/native';
 import PhotoGrid from '../components/PhotoGrid';
+import { COLORS } from '../constants/colors';
 
 const { width, height } = Dimensions.get('window');
 const imageWidth = width / 3 - 10; // Calculate the image width based on the number of columns and spacing
@@ -13,6 +14,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: COLORS.BACKGROUND,
   },
   image: {
     width: imageWidth,
@@ -23,7 +25,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     position: 'absolute',
     bottom: bottomButtonMargin,
-    backgroundColor: 'blue',
+    backgroundColor: COLORS.PRIMARY,
     padding: 10,
     borderRadius: 5,
   },
@@ -88,9 +90,13 @@ export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={() => navigation.push('Camera')}>
-        <Text style={styles.buttonText}>Camera</Text>
+        <Text style={styles.buttonText}>Take a Picture</Text>
       </TouchableOpacity>
-      {!photosPermission ? <Text>carlos</Text> : <PhotoGrid photos={photos} onEndReached={loadMorePhotos} />}
+      {!photosPermission ? (
+        <Text>need file access permission</Text>
+      ) : (
+        <PhotoGrid photos={photos} onEndReached={loadMorePhotos} />
+      )}
     </View>
   );
 }
