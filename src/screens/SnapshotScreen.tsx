@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, StyleSheet, Text, Button, Share } from 'react-native'; // Import Button and Share
+import { View, Image, StyleSheet, Text, Button, Share, TouchableOpacity } from 'react-native'; // Import Button and Share
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 
-const SnapshotScreen: React.FC = () => {
+const SnapshotScreen: React.FC = ({ navigation }) => {
   const [snapshot, setSnapshot] = useState<string | null>(null);
 
   useEffect(() => {
@@ -34,10 +34,21 @@ const SnapshotScreen: React.FC = () => {
     }
   };
 
+  const goToHome = () => {
+    navigation.navigate('Home');
+  };
+
   return (
     <View style={styles.container}>
       {snapshot && <Image source={{ uri: snapshot }} style={styles.image} />}
-      <Button title="Share Snapshot" onPress={onShare} />
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={onShare} style={styles.button}>
+          <Text style={styles.buttonText}>Share Snapshot</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={goToHome} style={styles.button}>
+          <Text style={styles.buttonText}>Go Home</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -50,8 +61,23 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: '100%',
+    height: '80%',
     resizeMode: 'contain',
+  },
+  button: {
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginTop: 20,
   },
 });
 

@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   image: {
-    width: '33%',
+    width: '30%',
     aspectRatio: 1,
     margin: 5,
   },
