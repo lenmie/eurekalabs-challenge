@@ -4,6 +4,8 @@ import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import { useFocusEffect } from '@react-navigation/native';
 import PhotoGrid from '../components/PhotoGrid';
 import { COLORS } from '../constants/colors';
+import usePhotos from '../hooks/usePhotos';
+import usePhotoPermission from '../hooks/usePhotoPermission';
 
 const { width, height } = Dimensions.get('window');
 const imageWidth = width / 3 - 10; // Calculate the image width based on the number of columns and spacing
@@ -35,58 +37,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const getRequestPermissionPromise = () => {
-  if (Platform.Version >= 33) {
-    return PermissionsAndroid.requestMultiple([
-      PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-      PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
-    ]).then(
-      (statuses) =>
-        statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] === PermissionsAndroid.RESULTS.GRANTED &&
-        statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO] === PermissionsAndroid.RESULTS.GRANTED
-    );
-  } else {
-    return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE).then(
-      (status) => status === PermissionsAndroid.RESULTS.GRANTED
-    );
-  }
-};
-
 export default function HomeScreen({ navigation }) {
-  const [photos, setPhotos] = React.useState([]);
-  const [page, setPage] = React.useState(1); // Track the current page of photos
-  const [photosPermission, setPhotosPermission] = React.useState(false);
-
-  React.useEffect(() => {
-    getRequestPermissionPromise().then((hasPermission) => {
-      if (hasPermission) {
-        setPhotosPermission(true);
-      }
-    });
-  }, []);
+  const { photos, loadMorePhotos, getPhotos } = usePhotos();
+  const photosPermission = usePhotoPermission();
 
   useFocusEffect(() => {
     getPhotos();
   });
-
-  const getPhotos = async () => {
-    try {
-      const { edges } = await CameraRoll.getPhotos({
-        first: 20 * page,
-        groupName: 'VisionCamera',
-        groupTypes: 'Album',
-      });
-      setPhotos(edges);
-    } catch (error) {
-      console.log('Error retrieving photos:', error);
-    }
-  };
-
-  const loadMorePhotos = () => {
-    setPage(page + 1);
-    getPhotos();
-  };
-
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={() => navigation.push('Camera')}>
