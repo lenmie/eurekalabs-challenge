@@ -14,7 +14,7 @@ export default function HomeScreen({ navigation }) {
 
   const getPhotos = async () => {
     try {
-      const { edges } = await CameraRoll.getPhotos({ first: 10 }); // Change the `first` parameter to the number of photos you want to retrieve
+      const { edges } = await CameraRoll.getPhotos({ first: 10, groupName: 'VisionCamera', groupTypes: 'Album' }); // Change the `first` parameter to the number of photos you want to retrieve
       setPhotos(edges);
     } catch (error) {
       console.log('Error retrieving photos:', error);

@@ -18,6 +18,7 @@ const CameraScreen = ({ navigation }) => {
         const photo = await camera.current.takePhoto();
         await CameraRoll.save(`file://${photo.path}`, {
           type: 'photo',
+          album: 'VisionCamera',
         });
       } catch (error) {
         console.error('Failed to take photo:', error);
