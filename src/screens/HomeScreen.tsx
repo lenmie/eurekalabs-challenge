@@ -13,6 +13,7 @@ import Geolocation from '@react-native-community/geolocation';
 import { useCameraPermission } from 'react-native-vision-camera';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import { useFocusEffect } from '@react-navigation/native';
+import PhotoGrid from '../components/PhotoGrid';
 
 const { width, height } = Dimensions.get('window');
 const imageWidth = width / 3 - 10; // Calculate the image width based on the number of columns and spacing
@@ -69,21 +70,12 @@ export default function HomeScreen({ navigation }) {
     getPhotos();
   };
 
-  const renderPhotoItem = ({ item }) => <Image source={{ uri: item.node.image.uri }} style={styles.image} />;
-
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={() => navigation.push('Camera')}>
         <Text style={styles.buttonText}>Camera</Text>
       </TouchableOpacity>
-      <FlatList
-        data={photos}
-        renderItem={renderPhotoItem}
-        keyExtractor={(_, index) => index.toString()}
-        numColumns={3}
-        onEndReached={loadMorePhotos} // Call the loadMorePhotos function when the FlatList reaches its bottom
-        onEndReachedThreshold={0.1} // Specify the threshold at which the onEndReached event should be triggered
-      />
+      <PhotoGrid photos={photos} onEndReached={loadMorePhotos} />
     </View>
   );
 }
